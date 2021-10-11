@@ -1,24 +1,24 @@
 <?php
 
-//declare(strict_types=1);
+declare(strict_types=1);
 
-namespace services\models;
+namespace services;
 
 use \DateTimeInterface;
 use \DateTime;
 use \DateTimeZone;
 use \PDO;
 
-final class Secret
+final class SecretModel
 {
 
     private PDO $db;
     public $insertedTime = null;
     public $hashRecord = null;
 
-    function __construct()
+    function __construct($db)
     {
-        $this->db = $this->container->get('db');
+        $this->db = $db;
     }
 
     function insertByHashName($guid, array $data): bool

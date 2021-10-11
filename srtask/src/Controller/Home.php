@@ -1,6 +1,6 @@
 <?php
 
-//declare(strict_types=1);
+declare(strict_types=1);
 
 namespace App\Controller;
 
@@ -9,10 +9,8 @@ use Pimple\Psr11\Container;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use \DateTime;
-use services\models\Secret;
+use services\SecretModel;
 //use \Sujip\Guid\Guid as Guid;
-
-require __DIR__ . "/../App/Services.php";
 
 final class Home
 {
@@ -45,20 +43,12 @@ final class Home
     {
         //$message = $args;
         if (isset($args['hash'])) {
-            $model = new Secret();
+            $model = new SecretModel($this->container->get('db'));
             $isSuccess = $model->getSecretByHash($args['hash']);
-            // $db = $this->container->get('db');
-            // $stmt = $db->prepare("SELECT * FROM secret WHERE hash = ? ");
-            // $isSuccess = $stmt->execute([$args['hash']]);
-            // $message = $stmt->fetch();
+
             if (!$this->isExpired($model->hashRecord)) {
                 $isSuccess = $model->decrementRemainingViews($args['hash']);
                 $message = $model->hashRecord;
-                // $db = $this->container->get('db');
-                // $stmt = $db->prepare("UPDATE secret
-                //                       SET remainingViews = remainingViews - 1 
-                //                       WHERE hash = ? ");
-                // $isSuccess = $stmt->execute([$args['hash']]);
             } else
                 $isSuccess = false;
         }
@@ -77,16 +67,8 @@ final class Home
         $guid = $Guid->create();
 
         if ($guid) {
-            $model = new Secret();
+            $model = new SecretModel($this->container->get('db'));
             $isSuccess = $model->insertByHashName($guid, $data);
-            // $db = $this->container->get('db');
-            // $stmt = $db->prepare("INSERT INTO secret(hash,secretText,createdAt,expiresAt,remainingViews)
-            //                   VALUES('$guid',:secretText,:createdAt,:expiresAt,:remainingViews) ");
-            // $stmt->bindParam(':secretText', $data['secret'], PDO::PARAM_STR);
-            // $stmt->bindParam(':createdAt', $now, PDO::PARAM_STR);
-            // $stmt->bindParam(':expiresAt', $data['expireAfter'], PDO::PARAM_STR);
-            // $stmt->bindParam(':remainingViews', $data['expireAfterViews'], PDO::PARAM_STR);
-            // $isSuccess = $stmt->execute();
         }
 
         if ($isSuccess) {
@@ -104,30 +86,4 @@ final class Home
         $message = ["message" => "Invalid input"];
         return JsonResponse::withJson($response, (string) json_encode($message), 405);
     }
-
-    // public function getHelp(Request $request, Response $response): Response
-    // {
-    //     $message = [
-    //         'api' => self::API_NAME,
-    //         'version' => self::API_VERSION,
-    //         'timestamp' => time(),
-    //     ];
-
-    //     return JsonResponse::withJson($response, (string) json_encode($message));
-    // }
-
-    // public function getStatus(Request $request, Response $response): Response
-    // {
-    //     $this->container->get('db');
-    //     $status = [
-    //         'status' => [
-    //             'database' => 'OK',
-    //         ],
-    //         'api' => self::API_NAME,
-    //         'version' => self::API_VERSION,
-    //         'timestamp' => time(),
-    //     ];
-
-    //     return JsonResponse::withJson($response, (string) json_encode($status));
-    // }
 }
