@@ -2,5 +2,5 @@
 
 declare(strict_types=1);
 
-$app->get('/', 'App\Controller\Home:getHelp');
-$app->get('/status', 'App\Controller\Home:getStatus');
+$app->get('/secret/{hash}', 'App\Controller\Home:getSecret');
+$app->post('/secret', 'App\Controller\Home:postSecret');

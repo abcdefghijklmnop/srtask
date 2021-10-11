@@ -22,11 +22,12 @@
     ],
     "require": {
         "php": "^7.4 || ^8.0",
-        "ext-pdo": "*",
         "ext-json": "*",
+        "ext-pdo": "*",
         "pimple/pimple": "^3.2",
         "slim/psr7": "^1.4.0",
         "slim/slim": "^4.5",
+        "sudiptpa/guid": "^1.0",
         "vlucas/phpdotenv": "^5.1"
     },
     "require-dev": {
