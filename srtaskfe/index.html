@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRTASK</title>
+    <link rel="stylesheet" href="./css/index.css?" /> <!-- oldalelrendezés/kinézet -->
+    <script defer type="text/javascript" src="./js/functions.js" ></script>
+</head>
+<body>
+    <hr/>
+    <form id="form1" >
+        <fieldset><legend>Endpoint: POST /secret</legend>
+            <label>Secret Text</label><textarea name="secret" >Secret Text</textarea>
+            <label>ExpiresAfter</label><input name="expireAfter" value="2025-10-12T16:24:58.110Z" type="text" />
+            <label>ExpiresAfterViews</label><input name="expireAfterViews" value="3"  type="text" />
+            <input name="send1JSON" value="Elküld JSON" type="submit" />
+            <input name="send1XML" value="Elküld XML" type="submit" />
+        </fieldset>
+    </form>
+    <div id="response1" ></div>
+    <hr/>
+    <form id="form2" >
+        <fieldset><legend>Endpoint: GET /secret/{hash}</legend>
+            <label>Hash</label><input name="hash" type="text" />
+            <input name="send2JSON" value="Elküld JSON" type="submit" />
+            <input name="send2XML" value="Elküld XML" type="submit" />
+        </fieldset>
+    </form>
+    <div id="response2" ></div>
+</body>
+</html>

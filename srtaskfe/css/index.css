@@ -1,0 +1,29 @@
+#form1 {
+    width: 200px;
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+#form1 textarea {
+    width: 170px;
+    min-width: 170px;
+    max-width: 170px;
+    resize: vertical;
+    min-height: 100px;
+    max-height: 200px;
+}
+
+#form1 label {
+    margin: 4px 0;
+    display: block;
+}
+
+#form2 label {
+    margin-right: 10px;
+}
+
+#response1, #response2 {
+    width: 250px;
+    white-space: break-spaces;
+    word-wrap: break-word;
+}  

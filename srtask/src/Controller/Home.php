@@ -63,7 +63,7 @@ final class Home
             $model = new SecretModel($this->container->get('db'));
             $isSuccess = $model->getSecretByHash($args['hash']);
 
-            if (!$this->isExpired($model->hashRecord)) {
+            if ($model->hashRecord && !$this->isExpired($model->hashRecord)) {
                 $isSuccess = $model->decrementRemainingViews($args['hash']);
                 $message = $model->hashRecord;
             } else {
