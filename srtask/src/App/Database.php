@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 use Pimple\Container;
 
+/**
+ * Database connection with PDO
+ */
 /** @var Container $container */
 $container['db'] = static function (): PDO {
     $dsn = sprintf(

@@ -7,8 +7,17 @@ namespace App\Helper;
 use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 
+/**
+ * Response in Xml format
+ */
 final class XmlResponse
 {
+    /**
+     * @param response: response object
+     * @param data: data string
+     * @param status: status code int
+     * @return response: response object
+     */
     public static function withXml(
         Response $response,
         string $data,

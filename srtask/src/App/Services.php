@@ -9,6 +9,9 @@ use \DateTime;
 use \DateTimeZone;
 use \PDO;
 
+/**
+ * Database model
+ */
 final class SecretModel
 {
     private PDO $db;
@@ -20,6 +23,12 @@ final class SecretModel
         $this->db = $db;
     }
 
+    /**
+     * Insert a record to the database with a given GUID and a generated time
+     * @param string $guid
+     * @param array $data
+     * @return bool
+     */
     public function insertByHashName($guid, array $data): bool
     {
         $this->insertedTime = new DateTime();
@@ -36,6 +45,11 @@ final class SecretModel
         return $stmt->execute();
     }
 
+    /**
+     * Change the DateTime format with Zulu time zone designator
+     * @param DateTime $date
+     * @return string (cloned) $date
+     */
     private function dateTo8601Zulu(DateTime $date): string
     {
         return (clone $date)
@@ -43,6 +57,11 @@ final class SecretModel
             ->format('Y-m-d\TH:i:s\Z'); //e,O,P,T;
     }
 
+    /**
+     * Get the secret data by hash param
+     * @param string $hash
+     * @return bool $isSuccess
+     */
     public function getSecretByHash($hash)
     {
         $stmt = $this->db->prepare("SELECT * FROM secret WHERE hash = ? ");
@@ -55,6 +74,11 @@ final class SecretModel
         return $isSuccess;
     }
 
+    /**
+     * Decrement the viewable number by 1 with specific hash
+     * @param string $hash
+     * @return bool
+     */
     public function decrementRemainingViews($hash)
     {
         $stmt = $this->db->prepare("UPDATE secret

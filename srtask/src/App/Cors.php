@@ -6,6 +6,9 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
 
+/**
+ * Allow to access the server from anywhere
+ */
 return static function (App $app): void {
     $app->options('/{routes:.+}', function (Request $request, Response $response) {
         return $response;

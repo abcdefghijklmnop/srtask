@@ -13,9 +13,12 @@ use \DateTime;
 use services\SecretModel;
 use \Sujip\Guid\Guid as Guid;
 
+/**
+ * Basic controller class
+ */
 final class Home
 {
-    private const API_NAME = 'Secret Server Coding Task';
+    private const API_NAME = 'Secret Server Coding Task with SLIM 4';
 
     private const API_VERSION = '1.0';
 
@@ -26,6 +29,11 @@ final class Home
         $this->container = $container;
     }
 
+    /**
+     * Return a boolean based on the parameter to decide the data is expired
+     * @param array $array
+     * @return bool boolean
+     */
     private function isExpired(array $array)
     {
         $datetime = new DateTime();
@@ -42,6 +50,13 @@ final class Home
         return true;
     }
 
+    /**
+     * Get the secret data with a hash(guid) GET parameter
+     * @param Request request: object
+     * @param Response response: object
+     * @param array $args: an array that contain get parameters
+     * @return Response response: object
+     */
     public function getSecret(Request $request, Response $response, array $args): Response
     {
         if (isset($args['hash'])) {
@@ -64,6 +79,12 @@ final class Home
         return $this->sendApi($request->getHeaderLine('Content-Type'), 404, $message, $response);
     }
 
+    /**
+     * Get the posted data, generate a GUID and save it all to the database
+     * @param Request request: object
+     * @param Response response: object
+     * @return Response response: object
+     */
     public function postSecret(Request $request, Response $response): Response
     {
         $data = $request->getParsedBody();
@@ -96,6 +117,14 @@ final class Home
         return $this->sendApi($request->getHeaderLine('Content-Type'), 405, $message, $response);
     }
 
+    /**
+     * Invoke the properly response helper function based on type parameter
+     * @param string $type: the string 
+     * @param int $code: html status code
+     * @param mixed $message: the response data
+     * @param Response $response: the response object
+     * @return Response: Response object
+     */
     private function sendApi(string $type, int $code, mixed $message, Response $response): Response
     {
         switch ($type) {
@@ -114,6 +143,11 @@ final class Home
         }
     }
 
+    /**
+     * Return an xml format string from an array
+     * @param array: an array
+     * @return mixed xml: an xml string or false
+     */
     private function array2xml(array $array)
     {
         //This function create a xml object with element root.
@@ -127,6 +161,11 @@ final class Home
         return $xml->asXML();
     }
 
+    /**
+     * Return an xml format string from an array
+     * @param xml: a SimpleXMLElement
+     * @return mixed: an associative array or boolean or null
+     */
     private function xml2array($xml)
     {
         return json_decode(json_encode($xml), true);

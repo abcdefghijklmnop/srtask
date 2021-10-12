@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+/**
+ * .env file loading
+ */
 $baseDir = __DIR__ . '/../../';
 $dotenv = Dotenv\Dotenv::createImmutable($baseDir);
 if (file_exists($baseDir . '.env')) {
