@@ -11,7 +11,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use \DateTime;
 use services\SecretModel;
-//use \Sujip\Guid\Guid as Guid;
+use \Sujip\Guid\Guid as Guid;
 
 final class Home
 {
@@ -42,7 +42,6 @@ final class Home
 
     public function getSecret(Request $request, Response $response, array $args): Response
     {
-        //$message = $args;
         if (isset($args['hash'])) {
             $model = new SecretModel($this->container->get('db'));
             $isSuccess = $model->getSecretByHash($args['hash']);
@@ -56,12 +55,10 @@ final class Home
 
         if ($isSuccess) {
             return $this->sendApi($request->getHeaderLine('Content-Type'), 200, $message, $response);
-            //return JsonResponse::withJson($response, (string) json_encode($message), 200);
         }
 
         $message = ["message" => "Secret not found"];
         return $this->sendApi($request->getHeaderLine('Content-Type'), 404, $message, $response);
-        //return JsonResponse::withJson($response, (string) json_encode($message), 404);
     }
 
     public function postSecret(Request $request, Response $response): Response
@@ -72,14 +69,14 @@ final class Home
             $data = $this->xml2array($data);
         }
 
-        $Guid = new \Sujip\Guid\Guid;
+        $Guid = new Guid;
         $guid = $Guid->create();
 
         if ($guid) {
             $model = new SecretModel($this->container->get('db'));
             $isSuccess = $model->insertByHashName($guid, $data);
         }
-        //$isSuccess = true;
+
         if ($isSuccess) {
             $message = [
                 "hash" => $guid,
@@ -90,12 +87,10 @@ final class Home
             ];
 
             return $this->sendApi($request->getHeaderLine('Content-Type'), 200, $message, $response);
-            //return JsonResponse::withJson($response, (string) json_encode($message), 200);
         }
 
         $message = ["message" => "Invalid input"];
         return $this->sendApi($request->getHeaderLine('Content-Type'), 405, $message, $response);
-        //return JsonResponse::withJson($response, (string) json_encode($message), 405);
     }
 
     private function sendApi(string $type, int $code, mixed $message, Response $response): Response
@@ -105,11 +100,6 @@ final class Home
                 return JsonResponse::withJson($response, (string) json_encode($message), $code);
                 break;
             case 'application/xml':
-                //echo var_dump($this->array2xml($message));
-                //$response->getBody()->write((string)$this->array2xml($message));
-                //return $response
-                //    ->withHeader('Content-Type', 'text/html')
-                //    ->withStatus($code);
                 return XmlResponse::withXml($response, $this->array2xml($message), $code);
                 break;
             default:
