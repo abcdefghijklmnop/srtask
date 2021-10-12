@@ -1,0 +1,11 @@
+{
+    "php-cs-fixer.executablePath": "${extensionPath}/php-cs-fixer.phar",
+    "php-cs-fixer.onsave": true,
+    "php-cs-fixer.rules": "@PSR2",
+    "phpcs.executablePath": "./srtask/vendor/bin/phpcs",
+    "phpcs.composerJsonPath": "composer.js",
+    "phpCodeSniffer.executable": "./srtask/vendor/bin/phpcs",
+    "phpCodeSniffer.standard": "PSR12",
+    "phpcbf.onsave": true,
+    "phpcbf.executablePath": "${extensionPath}/phpcbf"
+}

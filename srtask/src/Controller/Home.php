@@ -36,7 +36,9 @@ final class Home
         $datetime->modify($array['createdAt']);
         $createdAt = (int)$datetime->getTimestamp();
 
-        if (($expiresAt > $createdAt) && ((int)$array['remainingViews'] > 0)) return false;
+        if (($expiresAt > $createdAt) && ((int)$array['remainingViews'] > 0)) {
+            return false;
+        }
         return true;
     }
 
@@ -49,8 +51,9 @@ final class Home
             if (!$this->isExpired($model->hashRecord)) {
                 $isSuccess = $model->decrementRemainingViews($args['hash']);
                 $message = $model->hashRecord;
-            } else
+            } else {
                 $isSuccess = false;
+            }
         }
 
         if ($isSuccess) {
@@ -96,17 +99,17 @@ final class Home
     private function sendApi(string $type, int $code, mixed $message, Response $response): Response
     {
         switch ($type) {
-            case 'application/json':
-                return JsonResponse::withJson($response, (string) json_encode($message), $code);
+        case 'application/json':
+            return JsonResponse::withJson($response, (string) json_encode($message), $code);
                 break;
-            case 'application/xml':
-                return XmlResponse::withXml($response, $this->array2xml($message), $code);
+        case 'application/xml':
+            return XmlResponse::withXml($response, $this->array2xml($message), $code);
                 break;
-            default:
-                $response->getBody()->write("Type is not matched");
-                return $response
-                    ->withHeader('Content-Type', 'text/html')
-                    ->withStatus(500);
+        default:
+            $response->getBody()->write("Type is not matched");
+            return $response
+                ->withHeader('Content-Type', 'text/html')
+                ->withStatus(500);
                 break;
         }
     }
@@ -115,14 +118,17 @@ final class Home
     {
         //This function create a xml object with element root.
         $xml = new \SimpleXMLElement('<root></root>');
-        array_walk_recursive($array, function ($val, $key) use (&$xml) {
-            $xml->addChild((string)$key, (string)$val);
-        });
+        array_walk_recursive(
+            $array,
+            function ($val, $key) use (&$xml) {
+                $xml->addChild((string)$key, (string)$val);
+            }
+        );
         return $xml->asXML();
     }
 
     private function xml2array($xml)
     {
-        return json_decode(json_encode($xml), TRUE);
+        return json_decode(json_encode($xml), true);
     }
 }

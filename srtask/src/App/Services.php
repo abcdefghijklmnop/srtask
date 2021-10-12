@@ -11,17 +11,16 @@ use \PDO;
 
 final class SecretModel
 {
-
     private PDO $db;
     public $insertedTime = null;
     public $hashRecord = null;
 
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
 
-    function insertByHashName($guid, array $data): bool
+    public function insertByHashName($guid, array $data): bool
     {
         $this->insertedTime = new DateTime();
         //$this->insertedTime = gmdate('Y-m-d\TH:i:s\Z', $this->insertedTime->format('U'));
