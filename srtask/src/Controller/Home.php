@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Helper\JsonResponse;
+use App\Helper\XmlResponse;
 use Pimple\Psr11\Container;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -52,17 +53,25 @@ final class Home
             } else
                 $isSuccess = false;
         }
+
         if ($isSuccess) {
-            return JsonResponse::withJson($response, (string) json_encode($message), 200);
+            return $this->sendApi($request->getHeaderLine('Content-Type'), 200, $message, $response);
+            //return JsonResponse::withJson($response, (string) json_encode($message), 200);
         }
 
         $message = ["message" => "Secret not found"];
-        return JsonResponse::withJson($response, (string) json_encode($message), 404);
+        return $this->sendApi($request->getHeaderLine('Content-Type'), 404, $message, $response);
+        //return JsonResponse::withJson($response, (string) json_encode($message), 404);
     }
 
     public function postSecret(Request $request, Response $response): Response
     {
         $data = $request->getParsedBody();
+
+        if ($request->getHeaderLine('Content-Type') === 'application/xml') {
+            $data = $this->xml2array($data);
+        }
+
         $Guid = new \Sujip\Guid\Guid;
         $guid = $Guid->create();
 
@@ -70,7 +79,7 @@ final class Home
             $model = new SecretModel($this->container->get('db'));
             $isSuccess = $model->insertByHashName($guid, $data);
         }
-
+        //$isSuccess = true;
         if ($isSuccess) {
             $message = [
                 "hash" => $guid,
@@ -80,10 +89,50 @@ final class Home
                 "remainingViews" => $data['expireAfterViews']
             ];
 
-            return JsonResponse::withJson($response, (string) json_encode($message), 200);
+            return $this->sendApi($request->getHeaderLine('Content-Type'), 200, $message, $response);
+            //return JsonResponse::withJson($response, (string) json_encode($message), 200);
         }
 
         $message = ["message" => "Invalid input"];
-        return JsonResponse::withJson($response, (string) json_encode($message), 405);
+        return $this->sendApi($request->getHeaderLine('Content-Type'), 405, $message, $response);
+        //return JsonResponse::withJson($response, (string) json_encode($message), 405);
+    }
+
+    private function sendApi(string $type, int $code, mixed $message, Response $response): Response
+    {
+        switch ($type) {
+            case 'application/json':
+                return JsonResponse::withJson($response, (string) json_encode($message), $code);
+                break;
+            case 'application/xml':
+                //echo var_dump($this->array2xml($message));
+                //$response->getBody()->write((string)$this->array2xml($message));
+                //return $response
+                //    ->withHeader('Content-Type', 'text/html')
+                //    ->withStatus($code);
+                return XmlResponse::withXml($response, $this->array2xml($message), $code);
+                break;
+            default:
+                $response->getBody()->write("Type is not matched");
+                return $response
+                    ->withHeader('Content-Type', 'text/html')
+                    ->withStatus(500);
+                break;
+        }
+    }
+
+    private function array2xml(array $array)
+    {
+        //This function create a xml object with element root.
+        $xml = new \SimpleXMLElement('<root></root>');
+        array_walk_recursive($array, function ($val, $key) use (&$xml) {
+            $xml->addChild((string)$key, (string)$val);
+        });
+        return $xml->asXML();
+    }
+
+    private function xml2array($xml)
+    {
+        return json_decode(json_encode($xml), TRUE);
     }
 }
