@@ -24,17 +24,30 @@ final class SecretModel
     }
 
     /**
+     * Set the current time
+     * @return
+     */
+    public function setInsertedTime() {
+        $this->insertedTime = new DateTime();
+        //$this->insertedTime = gmdate('Y-m-d\TH:i:s\Z', $this->insertedTime->format('U'));
+        $this->insertedTime = $this->dateTo8601Zulu($this->insertedTime);
+        //$this->insertedTime = $this->insertedTime->format(DateTime::W3C);
+        return $this->insertedTime;
+    }
+
+    /**
      * Insert a record to the database with a given GUID and a generated time
+     * @var string $this->insertedTime
      * @param string $guid
      * @param array $data
      * @return bool
      */
     public function insertByHashName($guid, array $data): bool
     {
-        $this->insertedTime = new DateTime();
-        //$this->insertedTime = gmdate('Y-m-d\TH:i:s\Z', $this->insertedTime->format('U'));
-        $this->insertedTime = $this->dateTo8601Zulu($this->insertedTime);
-        //$this->insertedTime = $this->insertedTime->format(DateTime::W3C);
+        // $this->insertedTime = new DateTime();
+        // //$this->insertedTime = gmdate('Y-m-d\TH:i:s\Z', $this->insertedTime->format('U'));
+        // $this->insertedTime = $this->dateTo8601Zulu($this->insertedTime);
+        // //$this->insertedTime = $this->insertedTime->format(DateTime::W3C);
 
         $stmt = $this->db->prepare("INSERT INTO secret(hash,secretText,createdAt,expiresAt,remainingViews)
                               VALUES('$guid',:secretText,:createdAt,:expiresAt,:remainingViews) ");
@@ -72,6 +85,34 @@ final class SecretModel
         }
 
         return $isSuccess;
+    }
+
+    /**
+     * Get the secret data is exists by hash param
+     * @param string $hash
+     * @return bool
+     */
+    public function isExistsSecretByHash($hash)
+    {
+        $stmt = $this->db->prepare("SELECT count(*) FROM secret WHERE hash = ? ");
+        $isSuccess = $stmt->execute([$hash]);
+
+        if ($isSuccess) {
+            return ((int)$stmt->fetchColumn(0)) > 0;
+        }
+
+        return $isSuccess;
+    }
+
+    /**
+     * Delete the secret data by hash param
+     * @param string $hash
+     * @return bool
+     */
+    public function deleteSecretByHash($hash)
+    {
+        $stmt = $this->db->prepare("DELETE FROM secret WHERE hash = ? ");
+        return $stmt->execute([$hash]);
     }
 
     /**

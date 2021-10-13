@@ -67,6 +67,9 @@ final class Home
                 $isSuccess = $model->decrementRemainingViews($args['hash']);
                 $message = $model->hashRecord;
             } else {
+                if ($model->isExistsSecretByHash($args['hash'])) {
+                    $model->deleteSecretByHash($args['hash']);
+                }
                 $isSuccess = false;
             }
         }
@@ -95,10 +98,28 @@ final class Home
 
         $Guid = new Guid;
         $guid = $Guid->create();
-
         if ($guid) {
             $model = new SecretModel($this->container->get('db'));
+        }
+        while ($model->isExistsSecretByHash($guid)) {
+            $temporaryData = $model->getSecretByHash($guid);
+            if ($temporaryData) {
+                if ($this->isExpired($model->hashRecord)) {
+                    $model->deleteSecretByHash($guid);
+                }
+            }
+            $guid = $Guid->create();
+        }
+        //$model->getSecretByHash($guid);
+        if ($guid && !$this->isExpired(
+            ['expiresAt'=>$data['expireAfter'],
+                'remainingViews'=>$data['expireAfterViews'],
+                'createdAt'=>$model->setInsertedTime()]
+        )
+            ) {
             $isSuccess = $model->insertByHashName($guid, $data);
+        } else {
+            $isSuccess = false;
         }
 
         if ($isSuccess) {
@@ -119,7 +140,7 @@ final class Home
 
     /**
      * Invoke the properly response helper function based on type parameter
-     * @param string $type: the string 
+     * @param string $type: the string
      * @param int $code: html status code
      * @param mixed $message: the response data
      * @param Response $response: the response object
