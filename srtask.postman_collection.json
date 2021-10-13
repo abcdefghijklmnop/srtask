@@ -15,7 +15,7 @@
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/xml",
+						"value": "application/json",
 						"type": "text"
 					}
 				],
@@ -29,13 +29,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseurl}}/secret/32db1a4e-695b-46c1-af35-284fe69b5268",
+					"raw": "{{baseurl}}/secret/10edeb9b-add8-420d-84bc-0f2d607b5129",
 					"host": [
 						"{{baseurl}}"
 					],
 					"path": [
 						"secret",
-						"32db1a4e-695b-46c1-af35-284fe69b5268"
+						"10edeb9b-add8-420d-84bc-0f2d607b5129"
 					]
 				}
 			},
@@ -74,7 +74,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"secret\": \"Top secret text\",\r\n  \"expireAfter\": \"2022-10-11T08:52:55.564Z\",\r\n  \"expireAfterViews\": 3\r\n}",
+					"raw": "{\r\n  \"secret\": \"Top secret text\",\r\n  \"expireAfter\": \"2020-10-11T08:52:55.564Z\",\r\n  \"expireAfterViews\": 3\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
