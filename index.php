@@ -1,2 +1,2 @@
 <?PHP
-header("location: srtask/public");
+header("location: srtaskfe");
