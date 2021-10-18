@@ -1,0 +1,11 @@
+{
+    "name": "abcdefghijklmnop/srtask",
+    "description": "Practice",
+    "authors": [
+        {
+            "name": "Kathi Zsolt",
+            "email": "idiomasakk.hun@gmail.com",
+        }        
+    ]
+    "require": {}
+}
